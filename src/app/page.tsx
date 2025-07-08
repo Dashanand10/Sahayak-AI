@@ -5,24 +5,11 @@ import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import Features from '../components/Features';
 import Footer from '../components/Footer';
-import GradeSelector from '../components/GradeSelector';
-import TopicInput from '../components/TopicInput';
-import ContentOutput from '../components/ContentOutput';
+import ChatBot from '../components/ChatBot';
 import { useAuth } from '../hooks/useAuth';
 
 export default function Home() {
-  const [grade, setGrade] = useState('');
-  const [topic, setTopic] = useState('');
-  const [output, setOutput] = useState('');
   const { isAuthenticated, isLoading } = useAuth();
-
-  const handleGenerate = (inputTopic: string) => {
-    setTopic(inputTopic);
-
-    // 👉 Replace this with actual API call later
-    const dummyResponse = `📘 Lesson Plan for ${grade}\n\nTopic: ${inputTopic}\n\n1. Introduction...\n2. Explanation...\n3. Activities...\n4. Recap.`;
-    setOutput(dummyResponse);
-  };
 
   if (isLoading) {
     return (
@@ -40,16 +27,6 @@ export default function Home() {
       <Navbar />
       <HeroSection />
 
-      {/* 🔥 AI Teaching Assistant Panel - Only show if authenticated */}
-      {isAuthenticated && (
-        <section id="dashboard" className="max-w-4xl mx-auto py-12 px-6 bg-white rounded-xl shadow-lg my-10">
-          <h2 className="text-2xl font-bold text-indigo-700 mb-6 text-center">Sahayak AI Teaching Panel</h2>
-          <GradeSelector onSelect={setGrade} />
-          <TopicInput onSubmit={handleGenerate} />
-          <ContentOutput content={output} />
-        </section>
-      )}
-
       {/* Show login prompt for unauthenticated users */}
       {!isAuthenticated && (
         <section className="max-w-4xl mx-auto py-12 px-6 bg-white rounded-xl shadow-lg my-10 text-center">
@@ -63,6 +40,13 @@ export default function Home() {
               Login
             </a>
           </div>
+        </section>
+      )}
+
+      {/* 🔥 AI Teaching Assistant Chatbot - Only show if authenticated */}
+      {isAuthenticated && (
+        <section id="dashboard" className="max-w-4xl mx-auto py-12 px-6 my-10">
+          <ChatBot />
         </section>
       )}
 
