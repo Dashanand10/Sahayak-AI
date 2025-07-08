@@ -51,7 +51,7 @@ export default function ChatBot() {
         responseMimeType: 'text/plain',
       };
       
-      const model = 'gemma-2-2b-it';
+      const model = 'gemma-3n-e4b-it';
       const contents = [
         {
           role: 'user',
