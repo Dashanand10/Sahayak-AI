@@ -43,53 +43,43 @@ export default function ChatBot() {
 
   const generateAIResponse = async (userInput: string) => {
     try {
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-      if (!apiKey) {
-        throw new Error('API key not found');
-      }
-      
       const ai = new GoogleGenAI({
-        apiKey: apiKey,
+        apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'AIzaSyCJZ6OV6c6MBQfuRxBJEQt_OO1Zvzp2OqI',
       });
       
       const config = {
         responseMimeType: 'text/plain',
       };
       
-      const model = 'gemini-1.5-flash';
+      const model = 'gemini-2.0-flash-lite';
       const contents = [
         {
           role: 'user',
           parts: [
             {
-              text: `You are Sahayak AI, a helpful teaching assistant for educators working with multi-grade classrooms. Help create lesson plans, explain concepts, and provide educational guidance. 
-
-User question: ${userInput}
-
-Please provide a helpful, educational response.`,
+              text: `You are Sahayak AI, a helpful teaching assistant for educators working with multi-grade classrooms. Help create lesson plans, explain concepts, and provide educational guidance. User input: ${userInput}`,
             },
           ],
         },
       ];
 
-      const result = await ai.models.generateContent({
+      const response = await ai.models.generateContentStream({
         model,
         config,
         contents,
       });
 
-      // Check if result and response exist before accessing text
-      if (!result || !result.response) {
-        throw new Error('Invalid response from AI service');
+      let fullResponse = '';
+      for await (const chunk of response) {
+        if (chunk.text) {
+          fullResponse += chunk.text;
+        }
       }
 
-      const response = result.response;
-      const text = response.text();
-      
-      return text || 'I apologize, but I couldn\'t generate a response. Please try again.';
+      return fullResponse || 'I apologize, but I couldn\'t generate a response. Please try again.';
     } catch (error) {
       console.error('AI API Error:', error);
-      return `I'm having trouble connecting to the AI service right now. Error: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again in a moment.`;
+      return 'I\'m having trouble connecting to the AI service right now. Please try again in a moment.';
     }
   };
 
