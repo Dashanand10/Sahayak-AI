@@ -78,6 +78,11 @@ Please provide a helpful, educational response.`,
         contents,
       });
 
+      // Check if result and response exist before accessing text
+      if (!result || !result.response) {
+        throw new Error('Invalid response from AI service');
+      }
+
       const response = result.response;
       const text = response.text();
       
